@@ -6,6 +6,16 @@ var num2 = Math.ceil(Math.random() * 9);
 var answer = num1 * num2;
 
 var body = document.body;
+
+var score_plus = document.createElement('div');
+var score_minus = document.createElement('div');
+var correct = 0;
+var wrong = 0;
+score_plus.textContent = correct;
+score_minus.textContent = wrong;
+body.append(score_plus);
+body.append(score_minus);
+
 var word = document.createElement('div');
 word.textContent = `${String(num1)} x ${String(num2)} =`;
 body.append(word);
@@ -32,6 +42,8 @@ form.addEventListener('submit', function (e) {
 
   if (answer === Number(input.value)) {
     result.textContent = '딩동댕';
+    correct += 1;
+    score_plus.textContent = correct;
     num1 = Math.ceil(Math.random() * 9);
     num2 = Math.ceil(Math.random() * 9);
     answer = num1 * num2;
@@ -39,6 +51,8 @@ form.addEventListener('submit', function (e) {
     autoFocus();
   } else {
     result.textContent = '땡';
+    wrong += 1;
+    score_minus.textContent = wrong;
     autoFocus();
   }
 });
