@@ -31,11 +31,12 @@
         answer.push(numbers[idx]);
         numbers.splice(idx, 1); // splice(idx, length): idx위치부터 length 개수만큼 제거 (배열반환)
       }
-      console.log(answer);
+      console.log(`answer 배열: ${answer}`);
 
       const tries = [];
       function checkInput(input) {
         // $input.value 검사하는 코드
+        console.log(input.length);
         if (input.length !== 4) {
           // 1. 길이는 4
           alert('입력값은 4자리 숫자여야 합니다!');
@@ -50,21 +51,72 @@
         return true;
       }
 
+      function defeated() {
+        // OUT 결과 출력
+        $logs.append(`[LOSE] The Answer is ${answer.join('')}`);
+      }
+
+      let out = 0;
       $form.addEventListener('submit', (e) => {
         e.preventDefault(); // 기본동작 막기 = 새로고침 막기
         console.log('submit!!');
 
         const value = $input.value;
         $input.value = '';
-        console.log(value);
-        console.log(new Set(value));
+        console.log(`input.value: ${value}`);
 
-        if (checkInput(value)) {
-          // 입력값 문제 없음
-          tries.push(input);
-        } else {
-          // 입력값 에러 발생
+        // 입력값 에러 발생
+        if (!checkInput(value)) {
+          // !false -> return; if문 중첩 피하기
+          return;
         }
+
+        // 입력값 문제 없음
+        if (answer.join('') === value) {
+          $logs.textContent = 'HOMERUN!';
+          return;
+        }
+
+        if (tries.length >= 9) {
+          defeated();
+          return;
+        }
+
+        // 스트라이크/볼 기록
+        let strike = 0;
+        let ball = 0;
+        // answer: 2468, value :4567
+        for (let i = 0; i < answer.length; i++) {
+          const idx = value.indexOf(answer[i]);
+          if (idx > -1) {
+            // 일치하는 숫자 발견
+            if (idx === i) {
+              // 위치도 동일
+              strike += 1;
+            } else {
+              // 숫자만 동일
+              ball += 1;
+            }
+          }
+        }
+        if (strike === 0 && ball === 0) {
+          // 아웃 조건 추가
+          out++;
+          $logs.append(`${value}: OUT`, document.createElement('br'));
+        } else {
+          // 스트라이크 or 볼 존재
+          $logs.append(
+            `${value}: ${strike} STRIKE / ${ball} BALL`,
+            document.createElement('br')
+          );
+        }
+        if (out === 3) {
+          defeated();
+          return;
+        }
+
+        // 시도한 입력값 저장
+        tries.push(value);
       });
     </script>
   </body>
